@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QMessageBox, QScrollArea,\
-    QVBoxLayout, QWidget
+    QVBoxLayout, QWidget, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QImage
 import fitz
 
@@ -11,7 +11,7 @@ class PDFViewerApp(QMainWindow):
         self.setWindowTitle('PDF Viewer')
         self.setGeometry(100, 100, 800, 900)
 
-        self.label = QLabel(self)
+        self.label = QLabel()
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(self.label)
@@ -19,25 +19,35 @@ class PDFViewerApp(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(self.scroll_area)
 
-        central_widget = QWidget()
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+        button_layout = QHBoxLayout()
 
         self.prev_button = QPushButton('Previous', self)
-        self.prev_button.setGeometry(10, 830, 100, 30)
+        button_layout.addWidget(self.prev_button)
+        self.prev_button.setGeometry(10, 10, 130, 30)
         self.prev_button.clicked.connect(self.show_previous_page)
 
         self.next_button = QPushButton('Next', self)
-        self.next_button.setGeometry(120, 830, 100, 30)
+        button_layout.addWidget(self.next_button)
+        self.next_button.setGeometry(110, 10, 130, 30)
         self.next_button.clicked.connect(self.show_next_page)
 
         self.open_button = QPushButton('Open PDF', self)
-        self.open_button.setGeometry(230, 830, 100, 30)
+        button_layout.addWidget(self.open_button)
+        self.open_button.setGeometry(230, 10, 130, 30)
         self.open_button.clicked.connect(self.open_pdf)
 
         self.draw_button = QPushButton('Draw Rectangle', self)
-        self.draw_button.setGeometry(340, 830, 130, 30)
+        button_layout.addWidget(self.draw_button)
+        self.draw_button.setGeometry(340, 10, 130, 30)
         self.draw_button.clicked.connect(self.draw_rectangle)
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(layout)
+        main_layout.addLayout(button_layout)
+
+        central_widget = QWidget()
+        central_widget.setLayout(main_layout)
+        self.setCentralWidget(central_widget)
 
         self.page_number = 0
         self.doc = None

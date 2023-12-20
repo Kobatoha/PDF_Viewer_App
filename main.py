@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QMessageBox, QScrollArea,\
     QVBoxLayout, QWidget, QHBoxLayout
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QColor, QPen
+from PyQt5.QtCore import Qt
 import fitz
 
 
@@ -83,7 +84,26 @@ class PDFViewerApp(QMainWindow):
         self.label.setPixmap(pixmap)
 
     def draw_rectangle(self):
-        print("Rectangle drawing functionality")
+        if self.doc is not None:
+            page = self.doc.load_page(self.page_number)
+            pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+            image = QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride, QImage.Format_RGB888)
+            self.label.setPixmap(QPixmap.fromImage(image))
+            self.label.mousePressEvent = self.mouse_press_event
+            self.label.mouseReleaseEvent = self.mouse_release_event
+
+    def mouse_press_event(self, event):
+        self.start_x = event.x()
+        self.start_y = event.y()
+
+    def mouse_release_event(self, event):
+        end_x = event.x()
+        end_y = event.y()
+        painter = QPainter(self.label.pixmap())
+        painter.setPen(QPen(Qt.red, 3, Qt.SolidLine))
+        painter.drawRect(self.start_x, self.start_y, end_x - self.start_x, end_y - self.start_y)
+        painter.end()
+        self.label.update()
 
 
 if __name__ == '__main__':

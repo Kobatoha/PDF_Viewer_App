@@ -95,12 +95,17 @@ class PDFViewerApp(QMainWindow):
     def mouse_press_event(self, event):
         self.start_x = event.x()
         self.start_y = event.y()
+        painter = QPainter(self.label.pixmap())
+        painter.setPen(QPen(Qt.red, 2, Qt.SolidLine))
+        painter.drawRect(self.start_x, self.start_y, 1, 1)
+        painter.end()
+        self.label.update()
 
     def mouse_release_event(self, event):
         end_x = event.x()
         end_y = event.y()
         painter = QPainter(self.label.pixmap())
-        painter.setPen(QPen(Qt.red, 3, Qt.SolidLine))
+        painter.setPen(QPen(Qt.red, 2, Qt.SolidLine))
         painter.drawRect(self.start_x, self.start_y, end_x - self.start_x, end_y - self.start_y)
         painter.end()
         self.label.update()
